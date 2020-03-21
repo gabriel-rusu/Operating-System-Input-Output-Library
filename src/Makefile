@@ -23,7 +23,7 @@ run_test: build
 	$(TEST_SCRIPT) clean
 
 .PHONY: clean save
-save:
+save: clean
 	cd $(ROOT_PATH) &&\
 	git add -A	&&\
 	echo Enter commit message: &&\
