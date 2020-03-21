@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
 
 
 typedef struct _so_file
@@ -31,8 +32,7 @@ bool is(char *target, char *mode);
 int so_fclose(SO_FILE *stream);
 int so_fileno(SO_FILE *stream);
 int so_fflush(SO_FILE *stream);
-
-#define SO_EOF (-1)
+void delete(SO_FILE *stream);
 void fill(SO_FILE *stream);
 int so_fgetc(SO_FILE *stream);
 bool isNotFull(SO_FILE *stream);

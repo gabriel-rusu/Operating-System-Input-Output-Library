@@ -4,12 +4,17 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
     SO_FILE *stream = NULL;
     create(&stream, mode);
-    if(set(stream, mode)==SO_EOF){
+    if (set(stream, mode) == SO_EOF)
+    {
+        delete (stream);
         return NULL;
     }
     stream->descriptor = open(pathname, stream->flags, stream->mode);
     if (stream->descriptor == SO_EOF)
+    {
+        delete (stream);
         return NULL;
+    }
     else
         return stream;
 }
@@ -50,12 +55,20 @@ bool is(char *target, char *mode)
 
 int so_fclose(SO_FILE *stream)
 {
-    if (stream->last_op == WRITE)
-        so_fflush(stream);
-    free(stream->buffer);
+    // if (stream->last_op == WRITE)
+    //     so_fflush(stream);
+    if (stream->buffer)
+        free(stream->buffer);
     if (close(stream->descriptor))
+    {
+        free(stream);
         return SO_EOF;
-    return 0;
+    }
+    else
+    {
+        free(stream);
+        return 0;
+    }
 }
 
 int so_fileno(SO_FILE *stream)
@@ -170,4 +183,10 @@ SO_FILE *so_popen(const char *command, const char *type)
 int so_pclose(SO_FILE *stream)
 {
     return SO_EOF;
+}
+
+void delete (SO_FILE *stream)
+{
+    free(stream->buffer);
+    free(stream);
 }
