@@ -55,8 +55,8 @@ bool is(char *target, char *mode)
 
 int so_fclose(SO_FILE *stream)
 {
-    // if (stream->last_op == WRITE)
-    //     so_fflush(stream);
+    if (stream->last_op == WRITE)
+        so_fflush(stream);
     if (stream->buffer)
         free(stream->buffer);
     if (close(stream->descriptor))
@@ -87,7 +87,7 @@ int so_fflush(SO_FILE *stream) // TODO: de reverificat
     {
         int count = stream->end - stream->start;
         char *buffer = stream->buffer + stream->start;
-        write(stream->descriptor, buffer, count);
+        write(stream->descriptor, buffer, count*sizeof(int));
     }
 }
 
@@ -153,7 +153,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
     for(int index = 0;index < nmemb*size;index+=size)
     {
         for(int miniByte = 0;miniByte < size;miniByte++)
-        *((char*)ptr+index + miniByte) = so_fgetc(stream); //TODO: make this a 
+            *((char*)ptr+index + miniByte) = so_fgetc(stream);
     }
     return nmemb;
 }
