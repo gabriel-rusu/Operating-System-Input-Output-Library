@@ -4,6 +4,9 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
     SO_FILE *stream = NULL;
     create(&stream, mode);
+    if(set(stream, mode)==SO_EOF){
+        return NULL;
+    }
     stream->descriptor = open(pathname, stream->flags, stream->mode);
     if (stream->descriptor == SO_EOF)
         return NULL;
@@ -11,13 +14,12 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
         return stream;
 }
 
-void create(SO_FILE **stream,const char *mode)
+void create(SO_FILE **stream, const char *mode)
 {
     *stream = malloc(sizeof(SO_FILE));
     (*stream)->last_op = false;
     (*stream)->start = 0;
     (*stream)->end = 0;
-    set(stream, mode);
     (*stream)->buffer = malloc(sizeof(char) * BUFFER_SIZE);
 }
 
@@ -36,6 +38,9 @@ int set(SO_FILE *stream, char *mode)
         stream->flags = O_WRONLY | O_CREAT | O_APPEND;
     else if (is("a+", mode))
         stream->flags = O_RDWR | O_CREAT | O_APPEND;
+    else
+        return SO_EOF;
+    return SO_SET;
 }
 
 bool is(char *target, char *mode)
@@ -149,14 +154,17 @@ bool isEmpty(SO_FILE *stream)
     return stream->start == stream->end;
 }
 
-int so_feof(SO_FILE *stream){
+int so_feof(SO_FILE *stream)
+{
     return 0;
 }
-int so_ferror(SO_FILE *stream){
+int so_ferror(SO_FILE *stream)
+{
     return 0;
 }
 
-SO_FILE *so_popen(const char *command, const char *type){
+SO_FILE *so_popen(const char *command, const char *type)
+{
     return NULL;
 }
 int so_pclose(SO_FILE *stream)

@@ -21,7 +21,7 @@ typedef struct _so_file
 
 #define WRITE 1
 #define READ 0
-
+#define SO_SET 1
 #define BUFFER_SIZE 4096
 
 SO_FILE *so_fopen(const char *pathname, const char *mode);
