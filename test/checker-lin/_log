@@ -1,46 +1,16 @@
-==1808== Memcheck, a memory error detector
-==1808== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==1808== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
-==1808== Command: _test/bin/test_fgetc_large ./_test/work/test_3
-==1808== Parent PID: 1803
-==1808== 
-==1808== error calling PR_SET_PTRACER, vgdb might block
-==1808== Invalid read of size 1
-==1808==    at 0x4E3D12E: so_fgetc (in /mnt/d/Projects/Standard-Input-Output-Library/test/checker-lin/libso_stdio.so)
-==1808==    by 0x10917F: main (test_fgetc_large.c:72)
-==1808==  Address 0x563b550 is 0 bytes after a block of size 4,096 alloc'd
-==1808==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
-==1808==    by 0x4E3CE10: create (in /mnt/d/Projects/Standard-Input-Output-Library/test/checker-lin/libso_stdio.so)
-==1808==    by 0x4E3CD24: so_fopen (in /mnt/d/Projects/Standard-Input-Output-Library/test/checker-lin/libso_stdio.so)
-==1808==    by 0x109104: main (test_fgetc_large.c:64)
-==1808== 
-==1808== 
-==1808== HEAP SUMMARY:
-==1808==     in use at exit: 20,136 bytes in 3 blocks
-==1808==   total heap usage: 8 allocs, 5 frees, 29,488 bytes allocated
-==1808== 
-==1808== 40 bytes in 1 blocks are still reachable in loss record 1 of 3
-==1808==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
-==1808==    by 0x4E3CDCE: create (in /mnt/d/Projects/Standard-Input-Output-Library/test/checker-lin/libso_stdio.so)
-==1808==    by 0x4E3CD24: so_fopen (in /mnt/d/Projects/Standard-Input-Output-Library/test/checker-lin/libso_stdio.so)
-==1808==    by 0x109104: main (test_fgetc_large.c:64)
-==1808== 
-==1808== 4,096 bytes in 1 blocks are still reachable in loss record 2 of 3
-==1808==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
-==1808==    by 0x4E3CE10: create (in /mnt/d/Projects/Standard-Input-Output-Library/test/checker-lin/libso_stdio.so)
-==1808==    by 0x4E3CD24: so_fopen (in /mnt/d/Projects/Standard-Input-Output-Library/test/checker-lin/libso_stdio.so)
-==1808==    by 0x109104: main (test_fgetc_large.c:64)
-==1808== 
-==1808== 16,000 bytes in 1 blocks are still reachable in loss record 3 of 3
-==1808==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
-==1808==    by 0x108FFD: main (test_fgetc_large.c:47)
-==1808== 
-==1808== LEAK SUMMARY:
-==1808==    definitely lost: 0 bytes in 0 blocks
-==1808==    indirectly lost: 0 bytes in 0 blocks
-==1808==      possibly lost: 0 bytes in 0 blocks
-==1808==    still reachable: 20,136 bytes in 3 blocks
-==1808==         suppressed: 0 bytes in 0 blocks
-==1808== 
-==1808== For counts of detected and suppressed errors, rerun with: -v
-==1808== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+==2200== Memcheck, a memory error detector
+==2200== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==2200== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==2200== Command: _test/bin/test_perror_fork ./_test/work/test_43
+==2200== Parent PID: 2195
+==2200== 
+==2200== error calling PR_SET_PTRACER, vgdb might block
+==2200== 
+==2200== HEAP SUMMARY:
+==2200==     in use at exit: 0 bytes in 0 blocks
+==2200==   total heap usage: 1 allocs, 1 frees, 56 bytes allocated
+==2200== 
+==2200== All heap blocks were freed -- no leaks are possible
+==2200== 
+==2200== For counts of detected and suppressed errors, rerun with: -v
+==2200== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

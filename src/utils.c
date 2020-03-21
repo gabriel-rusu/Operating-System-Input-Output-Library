@@ -71,6 +71,11 @@ int so_fclose(SO_FILE *stream)
     }
 }
 
+bool isFull(SO_FILE *stream)
+{
+    return stream->start == stream->end && stream->start != 0;
+}
+
 int so_fileno(SO_FILE *stream)
 {
     return stream->descriptor;
@@ -97,8 +102,9 @@ void fill(SO_FILE *stream)
 
 int so_fgetc(SO_FILE *stream)
 {
-    if (isEmpty(stream))
+    if (isEmpty(stream) || isFull(stream))
     {
+        stream->end = stream->start = 0;
         fill(stream);
         if (stream->end == 0)
         {
@@ -164,7 +170,7 @@ long so_ftell(SO_FILE *stream)
 
 bool isEmpty(SO_FILE *stream)
 {
-    return stream->start == stream->end;
+    return stream->start == stream->end && stream->start == 0;
 }
 
 int so_feof(SO_FILE *stream)
