@@ -14,4 +14,4 @@ run: build
 
 .PHONY: clean
 clean:
-	rm -f *.o
+	rm -f *.o $(DEPLOY_PATH)$(LIB_NAME)
