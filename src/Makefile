@@ -3,7 +3,7 @@ CFLAGS = -Wall -fPIC
 FLAGS = -Wall -g -o
 LIB_NAME = libso_stdio.so
 DEPLOY_PATH = ../test/checker-lin/
-TEST_NUMBER = 3
+TEST_NUMBER = 8
 TEST_SCRIPT = ./_test/run_test.sh
 
 

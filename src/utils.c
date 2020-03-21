@@ -150,7 +150,10 @@ int so_fputc(int c, SO_FILE *stream)
 
 size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
-    return 0;
+    for(int index = 0;index < nmemb;index++)
+    {
+        *((char*)ptr+index) = so_fgetc(stream); //TODO: make this a 
+    }
 }
 
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
