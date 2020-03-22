@@ -98,7 +98,8 @@ void fill(SO_FILE *stream)
     int pos = lseek(stream->descriptor, 0, SEEK_END);
     lseek(stream->descriptor, old_pos, SEEK_SET);
     int bytes = (pos - old_pos) <= BUFFER_SIZE ? (pos - old_pos) : BUFFER_SIZE;
-    stream->end = read(stream->descriptor, stream->buffer, bytes);
+    int bytesRead = read(stream->descriptor, stream->buffer, bytes);
+    stream->end = (bytesRead==0) ? SO_EOF : bytesRead ;
 }
 
 int so_fgetc(SO_FILE *stream)
@@ -151,24 +152,31 @@ int so_fputc(int c, SO_FILE *stream)
 
 size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
+    int members_read = 0;
     for (int index = 0; index < nmemb * size; index += size)
     {
-        for (int miniByte = 0; miniByte < size; miniByte++)
-            *((char *)ptr + index + miniByte) = so_fgetc(stream);
+        for (int miniByte = 0; miniByte < size; miniByte++){
+            if(stream->end != SO_EOF)
+                *((char *)ptr + index + miniByte) = so_fgetc(stream);
+            else return --members_read;
+        }
+        members_read++;
     }
     stream->curr_pos+=nmemb*size;
-    return nmemb;
+    return members_read;
 }
 
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
+    int members_written = 0;
     for (size_t index = 0; index < nmemb * size; index += size)
     {
         for (int byte = 0; byte < size; byte++)
             so_fputc(*((char *)ptr + byte + index), stream);
+        members_written++;
     }
-    stream->curr_pos+=nmemb*size;
-    return nmemb;
+    stream->curr_pos+=members_written*size;
+    return members_written;
 }
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
