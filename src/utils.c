@@ -25,6 +25,7 @@ void create(SO_FILE **stream, const char *mode)
     (*stream)->last_op = false;
     (*stream)->start = 0;
     (*stream)->end = 0;
+    (*stream)->curr_pos = 0;
     (*stream)->buffer = malloc(sizeof(char) * BUFFER_SIZE);
 }
 
@@ -136,7 +137,7 @@ int so_fputc(int c, SO_FILE *stream)
 {
     if (isNotFull(stream))
     {
-        
+
         stream->last_op = WRITE;
         return stream->buffer[stream->end++] = (char)c;
     }
@@ -155,6 +156,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         for (int miniByte = 0; miniByte < size; miniByte++)
             *((char *)ptr + index + miniByte) = so_fgetc(stream);
     }
+    stream->curr_pos+=nmemb*size;
     return nmemb;
 }
 
@@ -165,17 +167,21 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         for (int byte = 0; byte < size; byte++)
             so_fputc(*((char *)ptr + byte + index), stream);
     }
+    stream->curr_pos+=nmemb*size;
     return nmemb;
 }
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
-    return (lseek(stream->descriptor, offset, whence) == -1) ? SO_EOF : 0;
+
+    stream->curr_pos = lseek(stream->descriptor, offset, whence);
+    return stream->curr_pos == -1 ? SO_EOF : 0;
 }
 
 long so_ftell(SO_FILE *stream)
 {
-    return lseek(stream->descriptor,0,SEEK_CUR);
+    // return lseek(stream->descriptor, 0, SEEK_CUR);
+    return stream->curr_pos;
 }
 
 bool isEmpty(SO_FILE *stream)
@@ -185,7 +191,10 @@ bool isEmpty(SO_FILE *stream)
 
 int so_feof(SO_FILE *stream)
 {
-    return 0;
+    int currentPos = lseek(stream->descriptor, 0, SEEK_CUR);
+    int fileEndPos = lseek(stream->descriptor, 0, SEEK_END);
+    lseek(stream->descriptor, currentPos, SEEK_SET);
+    return currentPos - fileEndPos;
 }
 int so_ferror(SO_FILE *stream)
 {

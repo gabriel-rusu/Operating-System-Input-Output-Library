@@ -16,6 +16,7 @@ typedef struct _so_file
     int end;
     int mode;
     int flags;
+    int curr_pos;
     bool last_op;
 }SO_FILE;
 
