@@ -203,7 +203,7 @@ int so_feof(SO_FILE *stream)
 }
 int so_ferror(SO_FILE *stream)
 {
-    return 0;
+    return 1;
 }
 
 SO_FILE *so_popen(const char *command, const char *type)
