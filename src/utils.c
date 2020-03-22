@@ -55,7 +55,7 @@ bool is(char *target, const char *mode)
 
 int so_fclose(SO_FILE *stream)
 {
-    if (stream->flags == (O_WRONLY | O_CREAT | O_TRUNC))
+    if (stream->last_op == WRITE)
         so_fflush(stream);
     if (close(stream->descriptor))
     {
@@ -83,8 +83,12 @@ int so_fflush(SO_FILE *stream) // TODO: de reverificat
 {
     int count = stream->end - stream->start;
     char *buffer = stream->buffer + stream->start;
-    write(stream->descriptor, buffer, count * sizeof(char));
+    int returnValue = write(stream->descriptor, buffer, count * sizeof(char));
     stream->start = stream->end = 0;
+    if (returnValue < 0)
+        return SO_EOF;
+    else
+        return 0;
 }
 
 void fill(SO_FILE *stream)
@@ -132,6 +136,7 @@ int so_fputc(int c, SO_FILE *stream)
 {
     if (isNotFull(stream))
     {
+        
         stream->last_op = WRITE;
         return stream->buffer[stream->end++] = (char)c;
     }
@@ -155,22 +160,22 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
-    for (int index = 0; index < nmemb * size; index += size)
+    for (size_t index = 0; index < nmemb * size; index += size)
     {
         for (int byte = 0; byte < size; byte++)
-            so_fputc(*((char*)ptr+byte +index),stream);
+            so_fputc(*((char *)ptr + byte + index), stream);
     }
     return nmemb;
 }
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
-    return lseek(stream->descriptor, offset, whence);
+    return (lseek(stream->descriptor, offset, whence) == -1) ? SO_EOF : 0;
 }
 
 long so_ftell(SO_FILE *stream)
 {
-    return 0;
+    return lseek(stream->descriptor,0,SEEK_CUR);
 }
 
 bool isEmpty(SO_FILE *stream)
