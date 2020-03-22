@@ -19,6 +19,7 @@ typedef struct _so_file
     int curr_pos;
     int last_op;
     bool error;
+    bool eof;
 }SO_FILE;
 
 

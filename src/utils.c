@@ -26,6 +26,7 @@ void create(SO_FILE **stream, const char *mode)
     (*stream)->start = 0;
     (*stream)->end = 0;
     (*stream)->curr_pos = 0;
+    (*stream)->eof = false;
     (*stream)->buffer = malloc(sizeof(char) * BUFFER_SIZE);
     (*stream)->error = false;
 }
@@ -120,6 +121,7 @@ int so_fgetc(SO_FILE *stream)
         }
         else if (stream->end == SO_EOF)
         {
+            stream->eof = true;
             return SO_EOF;
         }
         else
@@ -165,6 +167,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
             if(stream->end != SO_EOF)
                 *((char *)ptr + index + miniByte) = so_fgetc(stream);
             else {
+                stream->eof = true;
                 stream->error = true;
                 return --members_read;
             }
@@ -213,10 +216,11 @@ bool isEmpty(SO_FILE *stream)
 
 int so_feof(SO_FILE *stream)
 {
-    int currentPos = lseek(stream->descriptor, 0, SEEK_CUR);
-    int fileEndPos = lseek(stream->descriptor, 0, SEEK_END);
-    lseek(stream->descriptor, currentPos, SEEK_SET);
-    return (currentPos - fileEndPos)? SO_EOF : 0;
+    // int currentPos = lseek(stream->descriptor, 0, SEEK_CUR);
+    // int fileEndPos = lseek(stream->descriptor, 0, SEEK_END);
+    // lseek(stream->descriptor, currentPos, SEEK_SET);
+    // return (currentPos - fileEndPos)? SO_EOF : 0;
+    return stream->eof ? SO_EOF : 0;
 }
 
 void delete (SO_FILE *stream)
