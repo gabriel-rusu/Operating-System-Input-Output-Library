@@ -155,7 +155,11 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
-    return 0;
+    for (int index = 0; index < nmemb * size; index += size)
+    {
+        for (int byte = 0; byte < size; byte++)
+            so_fputc(*((char*)ptr+byte +index),stream);
+    }
 }
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
