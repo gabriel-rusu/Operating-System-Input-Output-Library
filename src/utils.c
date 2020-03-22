@@ -173,6 +173,11 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
+    if(stream->last_op == WRITE){
+        so_fflush(stream);
+    }else if(stream->last_op == READ){
+        stream->start = stream->end = 0;
+    }
 
     stream->curr_pos = lseek(stream->descriptor, offset, whence);
     return stream->curr_pos == -1 ? SO_EOF : 0;
@@ -194,7 +199,7 @@ int so_feof(SO_FILE *stream)
     int currentPos = lseek(stream->descriptor, 0, SEEK_CUR);
     int fileEndPos = lseek(stream->descriptor, 0, SEEK_END);
     lseek(stream->descriptor, currentPos, SEEK_SET);
-    return currentPos - fileEndPos;
+    return (currentPos - fileEndPos)? SO_EOF : 0;
 }
 int so_ferror(SO_FILE *stream)
 {
