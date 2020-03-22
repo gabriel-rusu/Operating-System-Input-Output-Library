@@ -17,12 +17,14 @@ typedef struct _so_file
     int mode;
     int flags;
     int curr_pos;
-    bool last_op;
+    int last_op;
+    bool error;
 }SO_FILE;
 
 
-#define WRITE 1
-#define READ 0
+#define WRITE 2
+#define READ 1
+#define NOT_SET 0
 #define SO_SET 1
 #define BUFFER_SIZE 4096
 

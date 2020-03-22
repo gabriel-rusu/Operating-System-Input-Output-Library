@@ -22,11 +22,12 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 void create(SO_FILE **stream, const char *mode)
 {
     *stream = malloc(sizeof(SO_FILE));
-    (*stream)->last_op = false;
+    (*stream)->last_op = NOT_SET;
     (*stream)->start = 0;
     (*stream)->end = 0;
     (*stream)->curr_pos = 0;
     (*stream)->buffer = malloc(sizeof(char) * BUFFER_SIZE);
+    (*stream)->error = false;
 }
 
 int set(SO_FILE *stream, const char *mode)
@@ -86,10 +87,14 @@ int so_fflush(SO_FILE *stream) // TODO: de reverificat
     char *buffer = stream->buffer + stream->start;
     int returnValue = write(stream->descriptor, buffer, count * sizeof(char));
     stream->start = stream->end = 0;
-    if (returnValue < 0)
+    if (returnValue < 0){
+        stream->error = true;
         return SO_EOF;
-    else
+    }else{
+        if(returnValue != count )
+            stream->error = true;
         return 0;
+    }
 }
 
 void fill(SO_FILE *stream)
@@ -158,7 +163,10 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         for (int miniByte = 0; miniByte < size; miniByte++){
             if(stream->end != SO_EOF)
                 *((char *)ptr + index + miniByte) = so_fgetc(stream);
-            else return --members_read;
+            else {
+                stream->error = true;
+                return --members_read;
+            }
         }
         members_read++;
     }
@@ -209,9 +217,17 @@ int so_feof(SO_FILE *stream)
     lseek(stream->descriptor, currentPos, SEEK_SET);
     return (currentPos - fileEndPos)? SO_EOF : 0;
 }
+
+void delete (SO_FILE *stream)
+{
+    free(stream->buffer);
+    free(stream);
+}
+
 int so_ferror(SO_FILE *stream)
 {
-    return 1;
+    // return 1;
+    return stream->error;
 }
 
 SO_FILE *so_popen(const char *command, const char *type)
@@ -221,10 +237,4 @@ SO_FILE *so_popen(const char *command, const char *type)
 int so_pclose(SO_FILE *stream)
 {
     return SO_EOF;
-}
-
-void delete (SO_FILE *stream)
-{
-    free(stream->buffer);
-    free(stream);
 }
