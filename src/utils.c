@@ -57,9 +57,10 @@ bool is(char *target, const char *mode)
 
 int so_fclose(SO_FILE *stream)
 {
+    int flush_status = false;
     if (stream->last_op == WRITE)
-        so_fflush(stream);
-    if (close(stream->descriptor))
+        flush_status =  so_fflush(stream);
+    if (close(stream->descriptor)||flush_status)
     {
         delete (stream);
         return SO_EOF;
@@ -150,7 +151,7 @@ int so_fputc(int c, SO_FILE *stream)
     else
     {
         so_fflush(stream);
-        stream->last_op == WRITE;
+        stream->last_op = WRITE;
         return stream->buffer[stream->end++] = (char)c;
     }
 }
