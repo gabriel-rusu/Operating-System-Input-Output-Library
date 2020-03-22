@@ -160,6 +160,7 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         for (int byte = 0; byte < size; byte++)
             so_fputc(*((char*)ptr+byte +index),stream);
     }
+    return nmemb;
 }
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
