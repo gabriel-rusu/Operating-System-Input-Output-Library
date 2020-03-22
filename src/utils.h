@@ -27,8 +27,8 @@ typedef struct _so_file
 
 SO_FILE *so_fopen(const char *pathname, const char *mode);
 void create(SO_FILE **stream,const char *mode);
-int set(SO_FILE *stream, char *mode);
-bool is(char *target, char *mode);
+int set(SO_FILE *stream,const char *mode);
+bool is(char *target,const char *mode);
 int so_fclose(SO_FILE *stream);
 int so_fileno(SO_FILE *stream);
 int so_fflush(SO_FILE *stream);

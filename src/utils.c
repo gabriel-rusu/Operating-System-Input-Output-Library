@@ -28,7 +28,7 @@ void create(SO_FILE **stream, const char *mode)
     (*stream)->buffer = malloc(sizeof(char) * BUFFER_SIZE);
 }
 
-int set(SO_FILE *stream, char *mode)
+int set(SO_FILE *stream, const char *mode)
 {
     stream->mode = 0666;
     if (is("r", mode))
@@ -48,25 +48,23 @@ int set(SO_FILE *stream, char *mode)
     return SO_SET;
 }
 
-bool is(char *target, char *mode)
+bool is(char *target, const char *mode)
 {
     return strcmp(target, mode) == 0;
 }
 
 int so_fclose(SO_FILE *stream)
 {
-    if (stream->last_op == WRITE)
+    if (stream->flags == (O_WRONLY | O_CREAT | O_TRUNC))
         so_fflush(stream);
-    if (stream->buffer)
-        free(stream->buffer);
     if (close(stream->descriptor))
     {
-        free(stream);
+        delete (stream);
         return SO_EOF;
     }
     else
     {
-        free(stream);
+        delete (stream);
         return 0;
     }
 }
@@ -83,12 +81,10 @@ int so_fileno(SO_FILE *stream)
 
 int so_fflush(SO_FILE *stream) // TODO: de reverificat
 {
-    if (stream->last_op == WRITE)
-    {
-        int count = stream->end - stream->start;
-        char *buffer = stream->buffer + stream->start;
-        write(stream->descriptor, buffer, count*sizeof(int));
-    }
+    int count = stream->end - stream->start;
+    char *buffer = stream->buffer + stream->start;
+    write(stream->descriptor, buffer, count * sizeof(char));
+    stream->start = stream->end = 0;
 }
 
 void fill(SO_FILE *stream)
@@ -137,23 +133,22 @@ int so_fputc(int c, SO_FILE *stream)
     if (isNotFull(stream))
     {
         stream->last_op = WRITE;
-        stream->start = stream->end = 0;
-        return stream->buffer[stream->end++] = c;
+        return stream->buffer[stream->end++] = (char)c;
     }
     else
     {
         so_fflush(stream);
-        stream->last_op = WRITE;
-        return stream->buffer[stream->end++] = c;
+        stream->last_op == WRITE;
+        return stream->buffer[stream->end++] = (char)c;
     }
 }
 
 size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
-    for(int index = 0;index < nmemb*size;index+=size)
+    for (int index = 0; index < nmemb * size; index += size)
     {
-        for(int miniByte = 0;miniByte < size;miniByte++)
-            *((char*)ptr+index + miniByte) = so_fgetc(stream);
+        for (int miniByte = 0; miniByte < size; miniByte++)
+            *((char *)ptr + index + miniByte) = so_fgetc(stream);
     }
     return nmemb;
 }

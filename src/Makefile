@@ -1,11 +1,12 @@
 CC = gcc
-CFLAGS = -Wall -fPIC
+CFLAGS = -std=c99 -Wall -fPIC
 FLAGS = -Wall -g -o
 LIB_NAME = libso_stdio.so
 DEPLOY_PATH = ../test/checker-lin/
 ROOT_PATH = ..
-TEST_NUMBER = 12
+TEST_NUMBER = 14
 TEST_SCRIPT = ./_test/run_test.sh
+LOG = _log
 
 
 build:	utils.o
@@ -32,4 +33,4 @@ save: clean
 	git push
 
 clean:
-	rm -f *.o $(DEPLOY_PATH)$(LIB_NAME) *.out
+	rm -f *.o $(DEPLOY_PATH)$(LIB_NAME) *.out $(DEPLOY_PATH)$(LOG)
