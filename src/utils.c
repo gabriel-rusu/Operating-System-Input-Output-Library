@@ -3,6 +3,7 @@
 SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
 	SO_FILE *stream = NULL;
+
 	create(&stream, mode);
 	if (set(stream, mode) == SO_EOF)
 	{
@@ -14,7 +15,9 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 	{
 		delete (stream);
 		return NULL;
-	} else {
+	}
+	else
+	{
 		return stream;
 	}
 }
@@ -89,24 +92,24 @@ int so_fflush(SO_FILE *stream)
 	int offset = 0;
 	int count = stream->end - stream->start;
 	char *buffer = stream->buffer + stream->start;
-	int returnValue = write(stream->descriptor, buffer, count * sizeof(char));
+	int returnValue = write(stream->descriptor, buffer,
+	count * sizeof(char));
+
 	stream->start = stream->end = 0;
 	if (returnValue < 0)
 	{
 		stream->error = true;
 		return SO_EOF;
-	}
-	else
-	{
+	} else {
 		if (returnValue != count)
 		{
 			offset = returnValue;
 			while (offset < count)
 			{
 				returnValue = write(stream->descriptor, buffer + offset, (count - offset) * sizeof(char));
-				if(returnValue ==0)
+				if (returnValue == 0)
 					return count;
-				if(returnValue < 0)
+				if (returnValue < 0)
 					return SO_EOF;
 				offset += returnValue;
 			}
@@ -120,11 +123,12 @@ void fill(SO_FILE *stream)
 	long old_pos = lseek(stream->descriptor, 0, SEEK_CUR);
 	long pos = lseek(stream->descriptor, 0, SEEK_END);
 	lseek(stream->descriptor, old_pos, SEEK_SET);
-	long bytes = ((pos - old_pos) <= BUFFER_SIZE && (pos -old_pos) != -1) ? (pos - old_pos) : BUFFER_SIZE;
+	long bytes = ((pos - old_pos) <= BUFFER_SIZE && (pos - old_pos) != -1) ? (pos - old_pos) : BUFFER_SIZE;
 	long bytesRead = read(stream->descriptor, stream->buffer, bytes);
-	if( bytesRead ==0 && bytes != 0)
+	if (bytesRead == 0 && bytes != 0)
 		stream->end = xread(stream->descriptor, stream->buffer, bytes);
-	else stream->end = (bytesRead == 0) ? SO_EOF : bytesRead;
+	else
+		stream->end = (bytesRead == 0) ? SO_EOF : bytesRead;
 }
 
 int so_fgetc(SO_FILE *stream)
@@ -136,20 +140,14 @@ int so_fgetc(SO_FILE *stream)
 		if (stream->end == 0)
 		{
 			return SO_EOF;
-		}
-		else if (stream->end == SO_EOF)
-		{
+		} else if (stream->end == SO_EOF){
 			stream->eof = true;
 			return SO_EOF;
-		}
-		else
-		{
+		} else {
 			stream->last_op = READ;
 			return stream->buffer[stream->start++];
 		}
-	}
-	else
-	{
+	} else {
 		stream->last_op = READ;
 		return stream->buffer[stream->start++];
 	}
@@ -167,9 +165,7 @@ int so_fputc(int c, SO_FILE *stream)
 
 		stream->last_op = WRITE;
 		return stream->buffer[stream->end++] = (char)c;
-	}
-	else
-	{
+	} else {
 		so_fflush(stream);
 		stream->last_op = WRITE;
 		return stream->buffer[stream->end++] = (char)c;
@@ -181,10 +177,11 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 	int members_read = 0;
 	for (int index = 0; index < nmemb * size; index += size)
 	{
-		
+
 		for (int miniByte = 0; miniByte < size; miniByte++)
 		{
-			if (stream->end != SO_EOF){
+			if (stream->end != SO_EOF)
+			{
 				*((char *)ptr + index + miniByte) = so_fgetc(stream);
 			} else {
 				printf("-->error here<--\n");
@@ -214,12 +211,9 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
-	if (stream->last_op == WRITE)
-	{
+	if (stream->last_op == WRITE){
 		so_fflush(stream);
-	}
-	else if (stream->last_op == READ)
-	{
+	} else if (stream->last_op == READ){
 		stream->start = stream->end = 0;
 	}
 
@@ -265,9 +259,7 @@ SO_FILE *so_popen(const char *command, const char *type)
 	{
 		return NULL;
 	}
-
-	if ((current = malloc(sizeof(struct pid))) == NULL)
-		return (NULL);
+	current = malloc(sizeof(struct pid)) if (current == NULL) return (NULL);
 	if (pipe(pipe_descriptor) < 0)
 	{
 		free(current);
@@ -376,7 +368,8 @@ ssize_t xread(int fd, void *buf, size_t count)
 {
 	size_t bytes_read = 0;
 
-	while (bytes_read < count) {
+	while (bytes_read < count)
+	{
 		ssize_t bytes_read_now = read(fd, buf + bytes_read,
 									  count - bytes_read);
 
