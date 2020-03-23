@@ -6,7 +6,10 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include <sys/param.h>
+#include <sys/wait.h>
+#include <signal.h>
+#include <errno.h>
 
 typedef struct _so_file
 {
@@ -20,7 +23,15 @@ typedef struct _so_file
     int last_op;
     bool error;
     bool eof;
+    int pid;
 }SO_FILE;
+
+typedef struct pid {
+	struct pid *next;
+	SO_FILE *fp;
+	int pid;
+} Node;
+static Node *pids;
 
 
 #define WRITE 2
@@ -32,7 +43,7 @@ typedef struct _so_file
 SO_FILE *so_fopen(const char *pathname, const char *mode);
 void create(SO_FILE **stream,const char *mode);
 int set(SO_FILE *stream,const char *mode);
-bool is(char *target,const char *mode);
+bool is(const char *target,const char *mode);
 int so_fclose(SO_FILE *stream);
 int so_fileno(SO_FILE *stream);
 int so_fflush(SO_FILE *stream);
@@ -46,3 +57,4 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream);
 int so_fseek(SO_FILE *stream, long offset, int whence);
 long so_ftell(SO_FILE *stream);
 bool isEmpty(SO_FILE *stream);
+int setDescriptors(int descriptors[2], SO_FILE *stream, const char *type);

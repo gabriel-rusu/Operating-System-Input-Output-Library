@@ -27,6 +27,7 @@ void create(SO_FILE **stream, const char *mode)
     (*stream)->end = 0;
     (*stream)->curr_pos = 0;
     (*stream)->eof = false;
+    (*stream)->pid = -1;
     (*stream)->buffer = malloc(sizeof(char) * BUFFER_SIZE);
     (*stream)->error = false;
 }
@@ -51,7 +52,7 @@ int set(SO_FILE *stream, const char *mode)
     return SO_SET;
 }
 
-bool is(char *target, const char *mode)
+bool is(const char *target, const char *mode)
 {
     return strcmp(target, mode) == 0;
 }
@@ -60,8 +61,8 @@ int so_fclose(SO_FILE *stream)
 {
     int flush_status = false;
     if (stream->last_op == WRITE)
-        flush_status =  so_fflush(stream);
-    if (close(stream->descriptor)||flush_status)
+        flush_status = so_fflush(stream);
+    if (close(stream->descriptor) || flush_status)
     {
         delete (stream);
         return SO_EOF;
@@ -83,17 +84,20 @@ int so_fileno(SO_FILE *stream)
     return stream->descriptor;
 }
 
-int so_fflush(SO_FILE *stream) // TODO: de reverificat
+int so_fflush(SO_FILE *stream)
 {
     int count = stream->end - stream->start;
     char *buffer = stream->buffer + stream->start;
     int returnValue = write(stream->descriptor, buffer, count * sizeof(char));
     stream->start = stream->end = 0;
-    if (returnValue < 0){
+    if (returnValue < 0)
+    {
         stream->error = true;
         return SO_EOF;
-    }else{
-        if(returnValue != count )
+    }
+    else
+    {
+        if (returnValue != count)
             stream->error = true;
         return 0;
     }
@@ -106,7 +110,7 @@ void fill(SO_FILE *stream)
     lseek(stream->descriptor, old_pos, SEEK_SET);
     int bytes = (pos - old_pos) <= BUFFER_SIZE ? (pos - old_pos) : BUFFER_SIZE;
     int bytesRead = read(stream->descriptor, stream->buffer, bytes);
-    stream->end = (bytesRead==0) ? SO_EOF : bytesRead ;
+    stream->end = (bytesRead == 0) ? SO_EOF : bytesRead;
 }
 
 int so_fgetc(SO_FILE *stream)
@@ -163,10 +167,12 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
     int members_read = 0;
     for (int index = 0; index < nmemb * size; index += size)
     {
-        for (int miniByte = 0; miniByte < size; miniByte++){
-            if(stream->end != SO_EOF)
+        for (int miniByte = 0; miniByte < size; miniByte++)
+        {
+            if (stream->end != SO_EOF)
                 *((char *)ptr + index + miniByte) = so_fgetc(stream);
-            else {
+            else
+            {
                 stream->eof = true;
                 stream->error = true;
                 return --members_read;
@@ -174,7 +180,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
         }
         members_read++;
     }
-    stream->curr_pos+=nmemb*size;
+    stream->curr_pos += nmemb * size;
     return members_read;
 }
 
@@ -187,15 +193,18 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
             so_fputc(*((char *)ptr + byte + index), stream);
         members_written++;
     }
-    stream->curr_pos+=members_written*size;
+    stream->curr_pos += members_written * size;
     return members_written;
 }
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
-    if(stream->last_op == WRITE){
+    if (stream->last_op == WRITE)
+    {
         so_fflush(stream);
-    }else if(stream->last_op == READ){
+    }
+    else if (stream->last_op == READ)
+    {
         stream->start = stream->end = 0;
     }
 
@@ -205,7 +214,6 @@ int so_fseek(SO_FILE *stream, long offset, int whence)
 
 long so_ftell(SO_FILE *stream)
 {
-    // return lseek(stream->descriptor, 0, SEEK_CUR);
     return stream->curr_pos;
 }
 
@@ -216,10 +224,6 @@ bool isEmpty(SO_FILE *stream)
 
 int so_feof(SO_FILE *stream)
 {
-    // int currentPos = lseek(stream->descriptor, 0, SEEK_CUR);
-    // int fileEndPos = lseek(stream->descriptor, 0, SEEK_END);
-    // lseek(stream->descriptor, currentPos, SEEK_SET);
-    // return (currentPos - fileEndPos)? SO_EOF : 0;
     return stream->eof ? SO_EOF : 0;
 }
 
@@ -231,15 +235,122 @@ void delete (SO_FILE *stream)
 
 int so_ferror(SO_FILE *stream)
 {
-    // return 1;
     return stream->error;
 }
 
 SO_FILE *so_popen(const char *command, const char *type)
 {
-    return NULL;
+    SO_FILE *stream = NULL;
+    int pipe_descriptor[2];
+    int pid;
+    struct pid *volatile current;
+
+    if (!(is(type, "r")) || !(is(type, "w")))
+    {
+        return NULL;
+    }
+
+    if ((current = malloc(sizeof(struct pid))) == NULL)
+        return (NULL);
+    if (pipe(pipe_descriptor) < 0)
+    {
+        free(current);
+        return (NULL);
+    }
+    switch (pid = fork())
+    {
+    case -1: /* Error. */
+        (void)close(pipe_descriptor[0]);
+        (void)close(pipe_descriptor[1]);
+        free(current);
+        return (NULL);
+        /* NOTREACHED */
+    case 0: /* Child. */
+    {
+
+        /*
+		 * We fork()'d, we got our own copy of the list, no
+		 * contention.
+		 */
+        for (Node *current = pids; current; current = current->next)
+            close(so_fileno(current->fp));
+        if (is(type, "r"))
+        {
+            (void)close(pipe_descriptor[0]);
+            if (pipe_descriptor[1] != STDOUT_FILENO)
+            {
+                (void)dup2(pipe_descriptor[1], STDOUT_FILENO);
+                (void)close(pipe_descriptor[1]);
+            }
+        }
+        else
+        {
+            (void)close(pipe_descriptor[1]);
+            if (pipe_descriptor[0] != STDIN_FILENO)
+            {
+                (void)dup2(pipe_descriptor[0], STDIN_FILENO);
+                (void)close(pipe_descriptor[0]);
+            }
+        }
+        execlp("/bin/sh", "sh", "-c", command, (char *)NULL);
+        _exit(127);
+        /* NOTREACHED */
+    }
+    }
+    if (is(type, "r"))
+    {
+        create(&(stream), type);
+        stream->descriptor = pipe_descriptor[0];
+        close(pipe_descriptor[1]);
+    }
+    else
+    {
+        create(&(stream), type);
+        stream->descriptor = pipe_descriptor[1];
+        close(pipe_descriptor[0]);
+    }
+    /* Link into list of file descriptors. */
+    current->fp = stream;
+    current->pid = pid;
+    current->next = pids;
+    pids = current;
+    return stream;
 }
+
 int so_pclose(SO_FILE *stream)
 {
-    return SO_EOF;
+    Node *cur, *last;
+    int pstat;
+    int pid;
+    /* Find the appropriate file pointer. */
+    for (last = NULL, cur = pids; cur; last = cur, cur = cur->next)
+        if (cur->fp == stream)
+            break;
+    if (cur == NULL)
+        return (-1);
+    so_fclose(stream);
+    do
+    {
+        pid = waitpid(cur->pid, &pstat, 0);
+    } while (pid == -1 && errno == EINTR);
+    /* Remove the entry from the linked list. */
+    if (last == NULL)
+        pids = cur->next;
+    else
+        last->next = cur->next;
+    free(cur);
+    return (pid == -1 ? -1 : pstat);
+}
+
+int setDescriptors(int descriptors[2], SO_FILE *stream, const char *type)
+{
+    switch (type[0])
+    {
+    case 'r':
+        stream->descriptor = descriptors[0];
+        return 1;
+    case 'w':
+        stream->descriptor = descriptors[1];
+        return 0;
+    }
 }
