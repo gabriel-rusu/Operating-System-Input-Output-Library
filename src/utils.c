@@ -94,21 +94,20 @@ int so_fflush(SO_FILE *stream)
 	if (returnValue < 0) {
 		stream->error = true;
 		return SO_EOF;
-	} else {
-		if (returnValue != count) {
-			offset = returnValue;
-			while (offset < count) {
-				returnValue = write(stream->descriptor,
-				buffer + offset, (count - offset) * sizeof(char));
-				if (returnValue == 0)
-					return count;
-				if (returnValue < 0)
-					return SO_EOF;
-				offset += returnValue;
-			}
-		}
-		return 0;
 	}
+	if (returnValue != count) {
+		offset = returnValue;
+		while (offset < count) {
+			returnValue = write(stream->descriptor,buffer + offset,
+			(count - offset) * sizeof(char));
+			if (returnValue == 0)
+				return count;
+			if (returnValue < 0)
+				return SO_EOF;
+			offset += returnValue;
+		}
+	}
+	return 0;
 }
 
 void fill(SO_FILE *stream)
@@ -153,8 +152,7 @@ bool isNotFull(SO_FILE *stream)
 
 int so_fputc(int c, SO_FILE *stream)
 {
-	if (isNotFull(stream))
-	{
+	if (isNotFull(stream)) {
 
 		stream->last_op = WRITE;
 		return stream->buffer[stream->end++] = (char)c;
@@ -241,6 +239,7 @@ int so_ferror(SO_FILE *stream)
 SO_FILE *so_popen(const char *command, const char *type)
 {
 	SO_FILE *stream = NULL;
+	Node *current;
 	int pipe_descriptor[2];
 	int pid;
 	struct pid *volatile current;
@@ -252,8 +251,7 @@ SO_FILE *so_popen(const char *command, const char *type)
 	current = malloc(sizeof(struct pid));
 	if (current == NULL)
 		return NULL;
-	if (pipe(pipe_descriptor) < 0)
-	{
+	if (pipe(pipe_descriptor) < 0) {
 		free(current);
 		return NULL;
 	}
@@ -272,22 +270,17 @@ SO_FILE *so_popen(const char *command, const char *type)
 		 * We fork()'d, we got our own copy of the list, no
 		 * contention.
 		 */
-		for (Node *current = pids; current; current = current->next)
+		for (current = pids; current; current = current->next)
 			close(so_fileno(current->fp));
-		if (is(type, "r"))
-		{
+		if (is(type, "r")) {
 			close(pipe_descriptor[0]);
-			if (pipe_descriptor[1] != STDOUT_FILENO)
-			{
+			if (pipe_descriptor[1] != STDOUT_FILENO) {
 				dup2(pipe_descriptor[1], STDOUT_FILENO);
 				close(pipe_descriptor[1]);
 			}
-		}
-		else
-		{
+		} else {
 			close(pipe_descriptor[1]);
-			if (pipe_descriptor[0] != STDIN_FILENO)
-			{
+			if (pipe_descriptor[0] != STDIN_FILENO) {
 				dup2(pipe_descriptor[0], STDIN_FILENO);
 				close(pipe_descriptor[0]);
 			}
@@ -297,14 +290,11 @@ SO_FILE *so_popen(const char *command, const char *type)
 		/* NOTREACHED */
 	}
 	}
-	if (is(type, "r"))
-	{
+	if (is(type, "r")) {
 		create(&(stream), type);
 		stream->descriptor = pipe_descriptor[0];
 		close(pipe_descriptor[1]);
-	}
-	else
-	{
+	} else {
 		create(&(stream), type);
 		stream->descriptor = pipe_descriptor[1];
 		close(pipe_descriptor[0]);
