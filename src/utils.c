@@ -7,17 +7,14 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 	create(&stream, mode);
 	if (set(stream, mode) == SO_EOF)
 	{
-		delete (stream);
+		delete(stream);
 		return NULL;
 	}
 	stream->descriptor = open(pathname, stream->flags, stream->mode);
-	if (stream->descriptor == SO_EOF)
-	{
-		delete (stream);
+	if (stream->descriptor == SO_EOF){
+		delete(stream);
 		return NULL;
-	}
-	else
-	{
+	} else {
 		return stream;
 	}
 }
@@ -63,16 +60,17 @@ bool is(const char *target, const char *mode)
 int so_fclose(SO_FILE *stream)
 {
 	int flush_status = false;
+
 	if (stream->last_op == WRITE)
 		flush_status = so_fflush(stream);
 	if (close(stream->descriptor) || flush_status)
 	{
-		delete (stream);
+		delete(stream);
 		return SO_EOF;
 	}
 	else
 	{
-		delete (stream);
+		delete(stream);
 		return 0;
 	}
 }
@@ -106,7 +104,8 @@ int so_fflush(SO_FILE *stream)
 			offset = returnValue;
 			while (offset < count)
 			{
-				returnValue = write(stream->descriptor, buffer + offset, (count - offset) * sizeof(char));
+				returnValue = write(stream->descriptor, 
+				buffer + offset, (count - offset) * sizeof(char));
 				if (returnValue == 0)
 					return count;
 				if (returnValue < 0)
@@ -213,9 +212,8 @@ int so_fseek(SO_FILE *stream, long offset, int whence)
 {
 	if (stream->last_op == WRITE){
 		so_fflush(stream);
-	} else if (stream->last_op == READ){
+	} else if (stream->last_op == READ)
 		stream->start = stream->end = 0;
-	}
 
 	stream->curr_pos = lseek(stream->descriptor, offset, whence);
 	return stream->curr_pos == -1 ? SO_EOF : 0;
@@ -236,7 +234,7 @@ int so_feof(SO_FILE *stream)
 	return stream->eof ? SO_EOF : 0;
 }
 
-void delete (SO_FILE *stream)
+void delete(SO_FILE *stream)
 {
 	free(stream->buffer);
 	free(stream);
@@ -261,19 +259,19 @@ SO_FILE *so_popen(const char *command, const char *type)
 	}
 	current = malloc(sizeof(struct pid));
 	if (current == NULL)
-		return (NULL);
+		return NULL;
 	if (pipe(pipe_descriptor) < 0)
 	{
 		free(current);
-		return (NULL);
+		return NULL;
 	}
 	switch (pid = fork())
 	{
 	case -1: /* Error. */
-		(void)close(pipe_descriptor[0]);
-		(void)close(pipe_descriptor[1]);
+		close(pipe_descriptor[0]);
+		close(pipe_descriptor[1]);
 		free(current);
-		return (NULL);
+		return NULL;
 		/* NOTREACHED */
 	case 0: /* Child. */
 	{
@@ -286,20 +284,20 @@ SO_FILE *so_popen(const char *command, const char *type)
 			close(so_fileno(current->fp));
 		if (is(type, "r"))
 		{
-			(void)close(pipe_descriptor[0]);
+			close(pipe_descriptor[0]);
 			if (pipe_descriptor[1] != STDOUT_FILENO)
 			{
-				(void)dup2(pipe_descriptor[1], STDOUT_FILENO);
-				(void)close(pipe_descriptor[1]);
+				dup2(pipe_descriptor[1], STDOUT_FILENO);
+				close(pipe_descriptor[1]);
 			}
 		}
 		else
 		{
-			(void)close(pipe_descriptor[1]);
+			close(pipe_descriptor[1]);
 			if (pipe_descriptor[0] != STDIN_FILENO)
 			{
-				(void)dup2(pipe_descriptor[0], STDIN_FILENO);
-				(void)close(pipe_descriptor[0]);
+				dup2(pipe_descriptor[0], STDIN_FILENO);
+				close(pipe_descriptor[0]);
 			}
 		}
 		arguments[2] = (char *)command;
@@ -351,19 +349,6 @@ int so_pclose(SO_FILE *stream)
 		last->next = cur->next;
 	free(cur);
 	return (pid == -1 ? -1 : pstat);
-}
-
-int setDescriptors(int descriptors[2], SO_FILE *stream, const char *type)
-{
-	switch (type[0])
-	{
-	case 'r':
-		stream->descriptor = descriptors[0];
-		return 1;
-	case 'w':
-		stream->descriptor = descriptors[1];
-		return 0;
-	}
 }
 
 ssize_t xread(int fd, void *buf, size_t count)
