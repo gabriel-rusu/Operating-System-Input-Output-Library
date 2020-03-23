@@ -259,7 +259,9 @@ SO_FILE *so_popen(const char *command, const char *type)
 	{
 		return NULL;
 	}
-	current = malloc(sizeof(struct pid)) if (current == NULL) return (NULL);
+	current = malloc(sizeof(struct pid));
+	if (current == NULL)
+		return (NULL);
 	if (pipe(pipe_descriptor) < 0)
 	{
 		free(current);
