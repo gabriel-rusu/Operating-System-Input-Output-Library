@@ -66,10 +66,10 @@ int so_fclose(SO_FILE *stream)
 	if (close(stream->descriptor) || flush_status) {
 		delete(stream);
 		return SO_EOF;
-	} else {
-		delete(stream);
-		return 0;
 	}
+	delete(stream);
+	return 0;
+	
 }
 
 bool isFull(SO_FILE *stream)
@@ -91,16 +91,13 @@ int so_fflush(SO_FILE *stream)
 	count * sizeof(char));
 
 	stream->start = stream->end = 0;
-	if (returnValue < 0)
-	{
+	if (returnValue < 0) {
 		stream->error = true;
 		return SO_EOF;
 	} else {
-		if (returnValue != count)
-		{
+		if (returnValue != count) {
 			offset = returnValue;
-			while (offset < count)
-			{
+			while (offset < count) {
 				returnValue = write(stream->descriptor,
 				buffer + offset, (count - offset) * sizeof(char));
 				if (returnValue == 0)
@@ -120,7 +117,7 @@ void fill(SO_FILE *stream)
 	long pos = lseek(stream->descriptor, 0, SEEK_END);
 
 	lseek(stream->descriptor, old_pos, SEEK_SET);
-	long bytes = ((pos - old_pos) <= BUFFER_SIZE && 
+	long bytes = ((pos - old_pos) <= BUFFER_SIZE &&
 	(pos - old_pos) != -1) ? (pos - old_pos) : BUFFER_SIZE;
 	long bytesRead = read(stream->descriptor, stream->buffer, bytes);
 
@@ -132,20 +129,17 @@ void fill(SO_FILE *stream)
 
 int so_fgetc(SO_FILE *stream)
 {
-	if (isEmpty(stream) || isFull(stream))
-	{
+	if (isEmpty(stream) || isFull(stream)) {
 		stream->end = stream->start = 0;
 		fill(stream);
 		if (stream->end == 0)
-		{
 			return SO_EOF;
-		} else if (stream->end == SO_EOF){
+		else if (stream->end == SO_EOF) {
 			stream->eof = true;
 			return SO_EOF;
-		} else {
-			stream->last_op = READ;
-			return stream->buffer[stream->start++];
 		}
+		stream->last_op = READ;
+		return stream->buffer[stream->start++];
 	} else {
 		stream->last_op = READ;
 		return stream->buffer[stream->start++];
@@ -198,8 +192,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
 	int members_written = 0;
-	for (size_t index = 0; index < nmemb * size; index += size)
-	{
+	for (size_t index = 0; index < nmemb * size; index += size) {
 		for (int byte = 0; byte < size; byte++)
 			so_fputc(*((char *)ptr + byte + index), stream);
 		members_written++;
