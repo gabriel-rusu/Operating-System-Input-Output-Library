@@ -4,7 +4,7 @@ FLAGS = -Wall -g -o
 LIB_NAME = libso_stdio.so
 DEPLOY_PATH = ../test/checker-lin/
 ROOT_PATH = ..
-TEST_NUMBER = 35
+TEST_NUMBER = 41
 TEST_SCRIPT = ./_test/run_test.sh
 LOG = _log
 

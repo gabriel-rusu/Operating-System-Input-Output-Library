@@ -245,7 +245,6 @@ SO_FILE *so_popen(const char *command, const char *type)
 	struct pid *volatile current;
 	const char *shell = "sh";
 	const char *flag = "-c";
-	const char *arguments[] = {shell, flag, command, NULL};
 
 	if (!(is(type, "r")) && !(is(type, "w")))
 		return NULL;
@@ -279,7 +278,7 @@ SO_FILE *so_popen(const char *command, const char *type)
 				close(pipe_descriptor[0]);
 			}
 		}
-		execve("/bin/sh", arguments, __environ);
+		execle("/bin/sh", shell, flag, command, (NULL), __environ);
 		_exit(127);
 		/* NOTREACHED */
 	}
