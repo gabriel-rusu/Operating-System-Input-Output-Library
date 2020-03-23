@@ -246,18 +246,17 @@ int so_ferror(SO_FILE *stream)
 	return stream->error;
 }
 
-SO_FILE *so_popen(const char *command, const char *type)
+SO_FILE *so_popen(const char * command, const char *type)
 {
 	SO_FILE *stream = NULL;
 	int pipe_descriptor[2];
 	int pid;
 	struct pid *volatile current;
-	static const char *arguments[] = {"sh", "-c", command, NULL};
+	char *arguments[] = {"sh", "-c", (char *)command, NULL};
 
 	if (!(is(type, "r")) && !(is(type, "w")))
-	{
 		return NULL;
-	}
+	
 	current = malloc(sizeof(struct pid));
 	if (current == NULL)
 		return NULL;
