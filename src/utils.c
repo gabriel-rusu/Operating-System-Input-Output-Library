@@ -239,7 +239,7 @@ int so_ferror(SO_FILE *stream)
 SO_FILE *so_popen(const char *command, const char *type)
 {
 	SO_FILE *stream = NULL;
-	Node *current;
+	Node *pcurrent;
 	int pipe_descriptor[2];
 	int pid;
 	struct pid *volatile current;
@@ -270,8 +270,8 @@ SO_FILE *so_popen(const char *command, const char *type)
 		 * We fork()'d, we got our own copy of the list, no
 		 * contention.
 		 */
-		for (current = pids; current; current = current->next)
-			close(so_fileno(current->fp));
+		for (pcurrent = pids; pcurrent; current = pcurrent->next)
+			close(so_fileno(pcurrent->fp));
 		if (is(type, "r")) {
 			close(pipe_descriptor[0]);
 			if (pipe_descriptor[1] != STDOUT_FILENO) {
