@@ -154,11 +154,10 @@ int so_fputc(int c, SO_FILE *stream)
 
 		stream->last_op = WRITE;
 		return stream->buffer[stream->end++] = (char)c;
-	} else {
-		so_fflush(stream);
-		stream->last_op = WRITE;
-		return stream->buffer[stream->end++] = (char)c;
 	}
+	so_fflush(stream);
+	stream->last_op = WRITE;
+	return stream->buffer[stream->end++] = (char)c;
 }
 
 size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
@@ -170,7 +169,8 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 	for (index = 0; index < nmemb * size; index += size) {
 		for (miniByte = 0; miniByte < size; miniByte++) {
 			if (stream->end != SO_EOF) {
-				*((char *)ptr + index + miniByte) = so_fgetc(stream);
+				*((char *)ptr + index + miniByte) 
+				= so_fgetc(stream);
 			} else {
 				printf("-->error here<--\n");
 				stream->eof = true;
@@ -247,7 +247,6 @@ SO_FILE *so_popen(const char *command, const char *type)
 
 	if (!(is(type, "r")) && !(is(type, "w")))
 		return NULL;
-	
 	current = malloc(sizeof(struct pid));
 	if (current == NULL)
 		return NULL;
@@ -255,8 +254,7 @@ SO_FILE *so_popen(const char *command, const char *type)
 		free(current);
 		return NULL;
 	}
-	switch (pid = fork())
-	{
+	switch (pid = fork()) {
 	case -1: /* Error. */
 		close(pipe_descriptor[0]);
 		close(pipe_descriptor[1]);
@@ -264,12 +262,6 @@ SO_FILE *so_popen(const char *command, const char *type)
 		return NULL;
 		/* NOTREACHED */
 	case 0: /* Child. */
-	{
-
-		/*
-		 * We fork()'d, we got our own copy of the list, no
-		 * contention.
-		 */
 		for (pcurrent = pids; pcurrent; current = pcurrent->next)
 			close(so_fileno(pcurrent->fp));
 		if (is(type, "r")) {
@@ -278,7 +270,7 @@ SO_FILE *so_popen(const char *command, const char *type)
 				dup2(pipe_descriptor[1], STDOUT_FILENO);
 				close(pipe_descriptor[1]);
 			}
-		} else {
+		} else if(is(type, "w")) {
 			close(pipe_descriptor[1]);
 			if (pipe_descriptor[0] != STDIN_FILENO) {
 				dup2(pipe_descriptor[0], STDIN_FILENO);
@@ -288,7 +280,6 @@ SO_FILE *so_popen(const char *command, const char *type)
 		execve("/bin/sh", arguments, __environ);
 		_exit(127);
 		/* NOTREACHED */
-	}
 	}
 	if (is(type, "r")) {
 		create(&(stream), type);
