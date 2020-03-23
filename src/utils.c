@@ -243,7 +243,8 @@ SO_FILE *so_popen(const char *command, const char *type)
 	int pipe_descriptor[2];
 	int pid;
 	struct pid *volatile current;
-	char *arguments[] = {"sh", "-c", (char *)command, NULL};
+	static const char *arguments[] = {"sh", "-c", NULL, NULL};
+	arguments[2] = (char *)command;
 
 	if (!(is(type, "r")) && !(is(type, "w")))
 		return NULL;
