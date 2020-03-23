@@ -11,7 +11,7 @@ SO_FILE *so_fopen(const char *pathname, const char *mode)
 		return NULL;
 	}
 	stream->descriptor = open(pathname, stream->flags, stream->mode);
-	if (stream->descriptor == SO_EOF){
+	if (stream->descriptor == SO_EOF) {
 		delete(stream);
 		return NULL;
 	} else {
@@ -63,8 +63,7 @@ int so_fclose(SO_FILE *stream)
 
 	if (stream->last_op == WRITE)
 		flush_status = so_fflush(stream);
-	if (close(stream->descriptor) || flush_status)
-	{
+	if (close(stream->descriptor) || flush_status) {
 		delete(stream);
 		return SO_EOF;
 	} else {
@@ -174,12 +173,12 @@ int so_fputc(int c, SO_FILE *stream)
 
 size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
+	int index;
 	int members_read = 0;
-	for (int index = 0; index < nmemb * size; index += size)
-	{
+	int miniByte;
 
-		for (int miniByte = 0; miniByte < size; miniByte++)
-		{
+	for (index = 0; index < nmemb * size; index += size) {
+		for (miniByte = 0; miniByte < size; miniByte++) {
 			if (stream->end != SO_EOF)
 			{
 				*((char *)ptr + index + miniByte) = so_fgetc(stream);
@@ -246,7 +245,7 @@ int so_ferror(SO_FILE *stream)
 	return stream->error;
 }
 
-SO_FILE *so_popen(const char * command, const char *type)
+SO_FILE *so_popen(const char *command, const char *type)
 {
 	SO_FILE *stream = NULL;
 	int pipe_descriptor[2];
