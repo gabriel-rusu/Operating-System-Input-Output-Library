@@ -69,7 +69,6 @@ int so_fclose(SO_FILE *stream)
 	}
 	delete(stream);
 	return 0;
-	
 }
 
 bool isFull(SO_FILE *stream)
@@ -98,7 +97,7 @@ int so_fflush(SO_FILE *stream)
 	if (returnValue != count) {
 		offset = returnValue;
 		while (offset < count) {
-			returnValue = write(stream->descriptor,buffer + offset,
+			returnValue = write(stream->descriptor, buffer + offset,
 			(count - offset) * sizeof(char));
 			if (returnValue == 0)
 				return count;
@@ -139,10 +138,9 @@ int so_fgetc(SO_FILE *stream)
 		}
 		stream->last_op = READ;
 		return stream->buffer[stream->start++];
-	} else {
-		stream->last_op = READ;
-		return stream->buffer[stream->start++];
 	}
+	stream->last_op = READ;
+	return stream->buffer[stream->start++];
 }
 
 bool isNotFull(SO_FILE *stream)
@@ -171,8 +169,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
 	for (index = 0; index < nmemb * size; index += size) {
 		for (miniByte = 0; miniByte < size; miniByte++) {
-			if (stream->end != SO_EOF)
-			{
+			if (stream->end != SO_EOF) {
 				*((char *)ptr + index + miniByte) = so_fgetc(stream);
 			} else {
 				printf("-->error here<--\n");
@@ -190,8 +187,11 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 {
 	int members_written = 0;
-	for (size_t index = 0; index < nmemb * size; index += size) {
-		for (int byte = 0; byte < size; byte++)
+	size_t index;
+	int byte;
+
+	for (index = 0; index < nmemb * size; index += size) {
+		for (byte = 0; byte < size; byte++)
 			so_fputc(*((char *)ptr + byte + index), stream);
 		members_written++;
 	}
