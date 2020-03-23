@@ -86,6 +86,7 @@ int so_fileno(SO_FILE *stream)
 
 int so_fflush(SO_FILE *stream)
 {
+    int offset = 0;
     int count = stream->end - stream->start;
     char *buffer = stream->buffer + stream->start;
     int returnValue = write(stream->descriptor, buffer, count * sizeof(char));
@@ -98,7 +99,18 @@ int so_fflush(SO_FILE *stream)
     else
     {
         if (returnValue != count)
-            stream->error = true;
+        {
+            offset = returnValue;
+            while (offset < count)
+            {
+                returnValue = write(stream->descriptor, buffer + offset, (count - offset) * sizeof(char));
+                if(returnValue ==0)
+                    return count;
+                if(returnValue < 0)
+                    return SO_EOF;
+                offset += returnValue;
+            }
+        }
         return 0;
     }
 }
@@ -244,8 +256,9 @@ SO_FILE *so_popen(const char *command, const char *type)
     int pipe_descriptor[2];
     int pid;
     struct pid *volatile current;
+    char *arguments[] = {"sh", "-c", NULL, NULL};
 
-    if (!(is(type, "r")) || !(is(type, "w")))
+    if (!(is(type, "r")) && !(is(type, "w")))
     {
         return NULL;
     }
@@ -292,7 +305,8 @@ SO_FILE *so_popen(const char *command, const char *type)
                 (void)close(pipe_descriptor[0]);
             }
         }
-        execlp("/bin/sh", "sh", "-c", command, (char *)NULL);
+        arguments[2] = (char *)command;
+        execve("/bin/sh", arguments, __environ);
         _exit(127);
         /* NOTREACHED */
     }
