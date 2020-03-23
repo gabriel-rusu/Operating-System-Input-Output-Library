@@ -67,9 +67,7 @@ int so_fclose(SO_FILE *stream)
 	{
 		delete(stream);
 		return SO_EOF;
-	}
-	else
-	{
+	} else {
 		delete(stream);
 		return 0;
 	}
@@ -104,7 +102,7 @@ int so_fflush(SO_FILE *stream)
 			offset = returnValue;
 			while (offset < count)
 			{
-				returnValue = write(stream->descriptor, 
+				returnValue = write(stream->descriptor,
 				buffer + offset, (count - offset) * sizeof(char));
 				if (returnValue == 0)
 					return count;
@@ -121,9 +119,12 @@ void fill(SO_FILE *stream)
 {
 	long old_pos = lseek(stream->descriptor, 0, SEEK_CUR);
 	long pos = lseek(stream->descriptor, 0, SEEK_END);
+
 	lseek(stream->descriptor, old_pos, SEEK_SET);
-	long bytes = ((pos - old_pos) <= BUFFER_SIZE && (pos - old_pos) != -1) ? (pos - old_pos) : BUFFER_SIZE;
+	long bytes = ((pos - old_pos) <= BUFFER_SIZE && 
+	(pos - old_pos) != -1) ? (pos - old_pos) : BUFFER_SIZE;
 	long bytesRead = read(stream->descriptor, stream->buffer, bytes);
+
 	if (bytesRead == 0 && bytes != 0)
 		stream->end = xread(stream->descriptor, stream->buffer, bytes);
 	else
@@ -210,9 +211,9 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 
 int so_fseek(SO_FILE *stream, long offset, int whence)
 {
-	if (stream->last_op == WRITE){
+	if (stream->last_op == WRITE)
 		so_fflush(stream);
-	} else if (stream->last_op == READ)
+	else if (stream->last_op == READ)
 		stream->start = stream->end = 0;
 
 	stream->curr_pos = lseek(stream->descriptor, offset, whence);
@@ -251,7 +252,7 @@ SO_FILE *so_popen(const char *command, const char *type)
 	int pipe_descriptor[2];
 	int pid;
 	struct pid *volatile current;
-	char *arguments[] = {"sh", "-c", NULL, NULL};
+	static const char *arguments[] = {"sh", "-c", command, NULL};
 
 	if (!(is(type, "r")) && !(is(type, "w")))
 	{
@@ -300,7 +301,6 @@ SO_FILE *so_popen(const char *command, const char *type)
 				close(pipe_descriptor[0]);
 			}
 		}
-		arguments[2] = (char *)command;
 		execve("/bin/sh", arguments, __environ);
 		_exit(127);
 		/* NOTREACHED */
