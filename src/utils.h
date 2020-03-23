@@ -58,3 +58,4 @@ int so_fseek(SO_FILE *stream, long offset, int whence);
 long so_ftell(SO_FILE *stream);
 bool isEmpty(SO_FILE *stream);
 int setDescriptors(int descriptors[2], SO_FILE *stream, const char *type);
+ssize_t xread(int fd, void *buf, size_t count);

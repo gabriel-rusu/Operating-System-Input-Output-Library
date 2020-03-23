@@ -4,13 +4,14 @@ FLAGS = -Wall -g -o
 LIB_NAME = libso_stdio.so
 DEPLOY_PATH = ../test/checker-lin/
 ROOT_PATH = ..
-TEST_NUMBER = 40
+TEST_NUMBER = 35
 TEST_SCRIPT = ./_test/run_test.sh
 LOG = _log
 
 
 build:	utils.o
 	$(CC) -shared -o $(DEPLOY_PATH)$(LIB_NAME) $^
+	cp utils.c $(DEPLOY_PATH)
 utils.o : utils.c
 
 run: build
@@ -33,4 +34,4 @@ save: clean
 	git push
 
 clean:
-	rm -f *.o $(DEPLOY_PATH)$(LIB_NAME) *.out $(DEPLOY_PATH)$(LOG)
+	rm -f *.o $(DEPLOY_PATH)$(LIB_NAME) *.out $(DEPLOY_PATH)$(LOG) $(DEPLOY_PATH)utils.c

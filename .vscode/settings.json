@@ -2,6 +2,7 @@
     "files.associations": {
         "test_util.h": "c",
         "large_file.h": "c",
-        "huge_file.h": "c"
+        "huge_file.h": "c",
+        "utils.h": "c"
     }
 }
