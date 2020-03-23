@@ -169,7 +169,7 @@ size_t so_fread(void *ptr, size_t size, size_t nmemb, SO_FILE *stream)
 	for (index = 0; index < nmemb * size; index += size) {
 		for (miniByte = 0; miniByte < size; miniByte++) {
 			if (stream->end != SO_EOF) {
-				*((char *)ptr + index + miniByte) 
+				*((char *)ptr + index + miniByte)
 				= so_fgetc(stream);
 			} else {
 				printf("-->error here<--\n");
@@ -270,7 +270,7 @@ SO_FILE *so_popen(const char *command, const char *type)
 				dup2(pipe_descriptor[1], STDOUT_FILENO);
 				close(pipe_descriptor[1]);
 			}
-		} else if(is(type, "w")) {
+		} else if (is(type, "w")) {
 			close(pipe_descriptor[1]);
 			if (pipe_descriptor[0] != STDIN_FILENO) {
 				dup2(pipe_descriptor[0], STDIN_FILENO);
@@ -310,8 +310,7 @@ int so_pclose(SO_FILE *stream)
 	if (cur == NULL)
 		return (-1);
 	so_fclose(stream);
-	do
-	{
+	do {
 		pid = waitpid(cur->pid, &pstat, 0);
 	} while (pid == -1 && errno == EINTR);
 	/* Remove the entry from the linked list. */
