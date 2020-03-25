@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c99 -Wall -fPIC
+CFLAGS = -std=c89 -Wall -fPIC
 FLAGS = -Wall -g -o
 LIB_NAME = libso_stdio.so
 DEPLOY_PATH = ../test/checker-lin/
@@ -7,12 +7,14 @@ ROOT_PATH = ..
 TEST_NUMBER = 41
 TEST_SCRIPT = ./_test/run_test.sh
 LOG = _log
+SOURCE = os_io.c
+OBJECT = os_io.o
 
 
-build:	utils.o
+build:	$(OBJECT)
 	$(CC) -shared -o $(DEPLOY_PATH)$(LIB_NAME) $^
-	cp utils.c $(DEPLOY_PATH)
-utils.o : utils.c
+	cp $(SOURCE) $(DEPLOY_PATH)
+$(OBJECT) : $(SOURCE)
 
 run: build
 	cd $(DEPLOY_PATH) &&\
@@ -34,4 +36,4 @@ save: clean
 	git push
 
 clean:
-	rm -f *.o $(DEPLOY_PATH)$(LIB_NAME) *.out $(DEPLOY_PATH)$(LOG) $(DEPLOY_PATH)utils.c
+	rm -f *.o $(DEPLOY_PATH)$(LIB_NAME) *.out $(DEPLOY_PATH)$(LOG) $(DEPLOY_PATH)$(SOURCE)

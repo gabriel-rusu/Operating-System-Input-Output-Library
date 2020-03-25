@@ -25,7 +25,7 @@ typedef struct _so_file
     bool error;
     bool eof;
     int pid;
-}SO_FILE;
+} SO_FILE;
 
 typedef struct pid {
 	struct pid *next;

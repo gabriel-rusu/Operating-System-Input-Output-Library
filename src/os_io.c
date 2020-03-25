@@ -1,12 +1,11 @@
-#include "utils.h"
+#include "os_io.h"
 
 SO_FILE *so_fopen(const char *pathname, const char *mode)
 {
 	SO_FILE *stream = NULL;
 
 	create(&stream, mode);
-	if (set(stream, mode) == SO_EOF)
-	{
+	if (set(stream, mode) == SO_EOF) {
 		delete(stream);
 		return NULL;
 	}
@@ -111,6 +110,8 @@ int so_fflush(SO_FILE *stream)
 
 void fill(SO_FILE *stream)
 {
+	int status;
+	int pid;
 	long old_pos = lseek(stream->descriptor, 0, SEEK_CUR);
 	long pos = lseek(stream->descriptor, 0, SEEK_END);
 
@@ -118,6 +119,9 @@ void fill(SO_FILE *stream)
 	long bytes = ((pos - old_pos) <= BUFFER_SIZE &&
 	(pos - old_pos) != -1) ? (pos - old_pos) : BUFFER_SIZE;
 	long bytesRead = read(stream->descriptor, stream->buffer, bytes);
+
+	if(stream->pid != SO_EOF)
+		pid = waitpid(stream->pid, &status, WNOHANG);
 
 	if (bytesRead == 0 && bytes != 0)
 		stream->end = xread(stream->descriptor, stream->buffer, bytes);
@@ -284,10 +288,12 @@ SO_FILE *so_popen(const char *command, const char *type)
 	}
 	if (is(type, "r")) {
 		create(&(stream), type);
+		stream->pid = pid;
 		stream->descriptor = pipe_descriptor[0];
 		close(pipe_descriptor[1]);
 	} else {
 		create(&(stream), type);
+		stream->pid = pid;
 		stream->descriptor = pipe_descriptor[1];
 		close(pipe_descriptor[0]);
 	}
