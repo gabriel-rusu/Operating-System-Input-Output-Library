@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width="50%" height="50%" src="res/ubuntu-logo.png" alt="Project logo"></a>
+ <img width="25%" height="25%" src="res/ubuntu-logo.png" alt="Project logo"></a>
 </p>
 
 <h3 align="center">Operating System Input Output Library</h3>
