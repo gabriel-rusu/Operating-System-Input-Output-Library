@@ -13,7 +13,7 @@
 
 ---
 
-<p align="center"> The os_io.h header defines three variable types, several macros, and various functions for performing input and output. The following function signatures are exported in the os_io.so library:
+<p align="center"> The os_io.h header defines three variable types, several macros, and various functions for performing buffered input and output operations with files.
     <br> 
 </p>
 
@@ -29,7 +29,7 @@
 - [Acknowledgments](#acknowledgement)
 
 ## 🧐 About <a name = "about"></a>
-To use 
+ The following function signatures are exported in the os_io.so library:
 ```C
 SO_FILE *so_fopen(const char *pathname, const char *mode);
 int so_fclose(SO_FILE *stream);
