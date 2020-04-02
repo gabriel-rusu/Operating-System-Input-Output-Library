@@ -29,7 +29,7 @@
 - [Acknowledgments](#acknowledgement)
 
 ## 🧐 About <a name = "about"></a>
- The following function signatures are exported in the os_io.h library:
+ The following function signatures are exported by the os_io.h library:
 ```C
 SO_FILE *so_fopen(const char *pathname, const char *mode);
 int so_fclose(SO_FILE *stream);
