@@ -29,7 +29,7 @@
 - [Acknowledgments](#acknowledgement)
 
 ## 🧐 About <a name = "about"></a>
- The following function signatures are exported in the os_io.so library:
+ The following function signatures are exported in the os_io.h library:
 ```C
 SO_FILE *so_fopen(const char *pathname, const char *mode);
 int so_fclose(SO_FILE *stream);
@@ -41,7 +41,7 @@ size_t so_fwrite(const void *ptr, size_t size, size_t nmemb, SO_FILE *stream);
 int so_fseek(SO_FILE *stream, long offset, int whence);
 long so_ftell(SO_FILE *stream);
 ```
-
+To use this functions you must add the os_io.h header in your source and specify at compile time where the library can be found
 ## 🏁 Getting Started <a name = "getting_started"></a>
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
 
