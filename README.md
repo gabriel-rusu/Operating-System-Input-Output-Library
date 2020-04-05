@@ -20,7 +20,6 @@
 ## 📝 Table of Contents
 - [About](#about)
 - [Getting Started](#getting_started)
-- [Deployment](#deployment)
 - [Usage](#usage)
 - [Built Using](#built_using)
 - [Contributing](../CONTRIBUTING.md)
@@ -77,10 +76,13 @@ If you want to run the automated tests for Linux system you must follow the foll
 * the results of the tests will be in the newly created file result.out
 
 ## 🎈 Usage <a name="usage"></a>
-Add notes about how to use the system.
+If you want to use the ***os_io.so*** library in your projects then you must add the ***os_io.h*** header in the desired source file and specify at the compile time the path to the os_io.so library.
 
-## 🚀 Deployment <a name = "deployment"></a>
-Add additional notes about how to deploy this on a live system.
+* running the following command in the project director will generate the os_io.so:
+  ```bash
+  make build
+  ```
+
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 - [Visual Studio Code](https://code.visualstudio.com/) - code editor
