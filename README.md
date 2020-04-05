@@ -65,18 +65,16 @@ This is a step by step series of examples that tell you how to get a development
 Explain how to run the automated tests for this system.
 
 ### Break down into end to end tests
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-Explain what these tests test and why
-
-```
-Give an example
-```
+If you want to run the automated tests for Linux system you must follow the following steps:
+* clone the repository by copping the following command in your terminal:
+  ```
+  https://github.com/RusuGabriel/Operating-System-Input-Output-Library.git
+  ```
+* go into the project director and run the following command:
+  ```bash
+  make test
+  ```
+* the results of the tests will be in the newly created file result.out
 
 ## 🎈 Usage <a name="usage"></a>
 Add notes about how to use the system.

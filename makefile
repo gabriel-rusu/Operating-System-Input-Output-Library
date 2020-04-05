@@ -1,7 +1,7 @@
 build:
 	cd src;\
 	make build
-run:
+test:
 	cd src;\
 	make run
 save: clean
