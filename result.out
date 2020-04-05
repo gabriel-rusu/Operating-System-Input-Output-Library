@@ -1,5 +1,5 @@
-make[1]: Entering directory '/mnt/d/Projects/Operating-System-Input-Output-Library/test/checker-lin'
-make[2]: Nothing to be done for 'build'.
+make[2]: Entering directory '/mnt/d/Projects/Operating-System-Input-Output-Library/test/checker-lin'
+make[3]: Nothing to be done for 'build'.
 'checkpatch.pl' tool not found on your system. Skipping source check...
 Please download 'checkpatch.pl' from 'https://raw.githubusercontent.com/torvalds/linux/master/scripts/checkpatch.pl' and install it in your $PATH.
 
@@ -46,16 +46,14 @@ Please download 'checkpatch.pl' from 'https://raw.githubusercontent.com/torvalds
 37) Test ferror read large..................................passed  [02/95]
 38) Test ferror write small.................................passed  [02/95]
 39) Test ferror write large.................................passed  [02/95]
-src/test_popen_read.c:85: Incorrect data
 -->error here<--
 Memcheck failed
 40) Test popen read.........................................failed  [ 0/95]
 41) Test popen write........................................passed  [04/95]
-src/test_perror_wait.c:76: Incorrect data
 -->error here<--
 Memcheck failed
 42) Test perror wait........................................failed  [ 0/95]
 43) Test perror fork........................................passed  [02/95]
 
                                                             Total:  [84/95]
-make[1]: Leaving directory '/mnt/d/Projects/Operating-System-Input-Output-Library/test/checker-lin'
+make[2]: Leaving directory '/mnt/d/Projects/Operating-System-Input-Output-Library/test/checker-lin'

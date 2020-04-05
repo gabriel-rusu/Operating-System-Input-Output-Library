@@ -19,7 +19,7 @@ $(OBJECT) : $(SOURCE)
 
 run: build
 	cd $(DEPLOY_PATH) &&\
-	make -f Makefile.checker > ../../src/result.out 2>../../src/result.out
+	make -f Makefile.checker > ../../result.out 2>../../error.out
 
 run_test: build
 	cd $(DEPLOY_PATH) && \
