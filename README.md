@@ -88,7 +88,7 @@ Add additional notes about how to deploy this on a live system.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 - [Visual Studio Code](https://code.visualstudio.com/) - code editor
-- [GCC](https://gcc.gnu.org/) - used to compile the program on my Linux machine
+- [GCC](https://gcc.gnu.org/) - used to compile the library on my Linux machine
 
 
 ## ✍️ Authors <a name = "authors"></a>
