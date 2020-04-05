@@ -54,12 +54,15 @@ To use the os_io.h library on your projects you must have:
 ### Installing
 This is a step by step series of examples that tell you how to get a development env running.
 
-Linux:
-start by updating the packages list
-$ sudo apt update
-install the build-essential package(a package of new packages including gcc, g++ and make) by typing:
-$ sudo apt install build-essential 
-
+* Linux:
+  * start by updating the packages list
+    ```bash
+    $sudo apt update
+    ```
+  * install the build-essential package(a package of new packages including gcc, g++ and make) by typing:
+    ```bash
+    $sudo apt install build-essential 
+    ```
 ## 🔧 Running the tests <a name = "tests"></a>
 Explain how to run the automated tests for this system.
 
