@@ -87,10 +87,9 @@ Add notes about how to use the system.
 Add additional notes about how to deploy this on a live system.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
-- [MongoDB](https://www.mongodb.com/) - Database
-- [Express](https://expressjs.com/) - Server Framework
-- [VueJs](https://vuejs.org/) - Web Framework
-- [NodeJs](https://nodejs.org/en/) - Server Environment
+- [Visual Studio Code](https://code.visualstudio.com/) - code editor
+- [GCC](https://gcc.gnu.org/) - used to compile the program on my Linux machine
+
 
 ## ✍️ Authors <a name = "authors"></a>
 - [@RusuGabriel](https://github.com/RusuGabriel) - implementation
