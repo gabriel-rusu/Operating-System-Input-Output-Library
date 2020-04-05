@@ -43,31 +43,22 @@ long so_ftell(SO_FILE *stream);
 ```
 To use this functions you must add the os_io.h header in your source and specify at compile time where the library can be found
 ## 🏁 Getting Started <a name = "getting_started"></a>
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
-What things you need to install the software and how to install them.
+To use the os_io.h library on your projects you must have:
 
-```
-Give examples
-```
+* for UNIX based operating systems:
+  * gcc - is a tool from the GNU Compiler Collection used to compile and link C programs
 
 ### Installing
-A step by step series of examples that tell you how to get a development env running.
+This is a step by step series of examples that tell you how to get a development env running.
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo.
+Linux:
+start by updating the packages list
+$ sudo apt update
+install the build-essential package(a package of new packages including gcc, g++ and make) by typing:
+$ sudo apt install build-essential 
 
 ## 🔧 Running the tests <a name = "tests"></a>
 Explain how to run the automated tests for this system.
