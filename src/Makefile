@@ -14,6 +14,7 @@ OBJECT = os_io.o
 build:	$(OBJECT)
 	$(CC) -shared -o $(DEPLOY_PATH)$(LIB_NAME) $^
 	cp $(SOURCE) $(DEPLOY_PATH)
+	cp $(DEPLOY_PATH)$(LIB_NAME) ..
 $(OBJECT) : $(SOURCE)
 
 run: build
