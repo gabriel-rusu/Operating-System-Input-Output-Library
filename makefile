@@ -4,7 +4,7 @@ build:
 run:
 	cd src;\
 	make run
-save:
+save: clean
 	cd src;\
 	make save
 clean:
