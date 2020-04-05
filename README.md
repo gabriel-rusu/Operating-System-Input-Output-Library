@@ -3,9 +3,7 @@
  <img width="25%" height="25%" src="res/ubuntu-logo.png" alt="Project logo"></a>
 </p>
 
-<h3 align="center">Operating System Input Output Library</h3>
-
----
+<h1 align="center">Operating System Input Output Library</h1>
 
 <p align="center"> The os_io.h header defines three variable types, several macros, and various functions for performing buffered input and output operations with files.
     <br> 
