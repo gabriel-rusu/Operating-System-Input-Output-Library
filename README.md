@@ -5,12 +5,6 @@
 
 <h3 align="center">Operating System Input Output Library</h3>
 
-<div align="center">
-
-  [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
-
-</div>
-
 ---
 
 <p align="center"> The os_io.h header defines three variable types, several macros, and various functions for performing buffered input and output operations with files.
