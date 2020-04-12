@@ -46,17 +46,17 @@ This is a step by step series of examples that tell you how to get a development
 * Linux:
   * start by updating the packages list
     ```bash
-    $sudo apt update
+    $sudo apt-get update
     ```
   * install the build-essential package(a package of new packages including gcc, g++ and make) by typing:
     ```bash
-    $sudo apt install build-essential 
+    $sudo apt-get install build-essential 
     ```
 ## 🔧 Running the tests <a name = "tests"></a>
 If you want to run the automated tests for Linux system you must follow the following steps:
 * clone the repository by copping the following command in your terminal:
   ```
-  https://github.com/RusuGabriel/Operating-System-Input-Output-Library.git
+  git clone https://github.com/RusuGabriel/Operating-System-Input-Output-Library.git
   ```
 * go into the project director and run the following command:
   ```bash
