@@ -32,7 +32,7 @@ long so_ftell(SO_FILE *stream);
 ```
 To use this functions you must add the os_io.h header in your source and specify at compile time where the library can be found
 ## 🏁 Getting Started <a name = "getting_started"></a>
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 To use the os_io.h library on your projects you must have:
