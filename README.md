@@ -56,7 +56,7 @@ This is a step by step series of examples that tell you how to get a development
 If you want to run the automated tests for Linux system you must follow the following steps:
 * clone the repository by copping the following command in your terminal:
   ```
-  git clone https://github.com/RusuGabriel/Operating-System-Input-Output-Library.git
+  git clone https://github.com/gabriel-rusu/Operating-System-Input-Output-Library.git
   ```
 * go into the project director and run the following command:
   ```bash
@@ -79,5 +79,5 @@ If you want to use the ***os_io.so*** library in your projects then you must add
 
 
 ## ✍️ Authors <a name = "authors"></a>
-- [@RusuGabriel](https://github.com/RusuGabriel) - implementation
+- [@gabriel-rusu](https://github.com/gabriel-rusu) - implementation
 
